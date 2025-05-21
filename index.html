@@ -77,7 +77,7 @@
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 800px; /* Increased max-width for better readability on wider screens */
+            max-width: 800px;
             margin-left: auto;
             margin-right: auto;
             height: 300px;
@@ -107,7 +107,7 @@
              outline: 2px solid transparent;
              outline-offset: 2px;
              border-color: #0ea5e9; /* sky-500 */
-             box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.3); /* sky-500 with opacity */
+             box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.3);
          }
          .header-logo-container {
              display: inline-block;
@@ -133,6 +133,22 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8; /* slate-500 */
         }
+        /* Loading and Error Message Styles */
+        #loading-message, #error-message {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 500; /* medium */
+        }
+        #loading-message {
+            color: #0369a1; /* sky-700 */
+        }
+        #error-message {
+            color: #dc2626; /* red-600 */
+            background-color: #fee2e2; /* red-100 */
+            border: 1px solid #f87171; /* red-400 */
+            border-radius: 0.5rem; /* rounded-lg */
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 py-8">
@@ -155,105 +171,69 @@
         </nav>
 
         <main id="app-content">
+            <div id="loading-message">
+                <svg class="animate-spin h-8 w-8 text-sky-600 mx-auto mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                Loading training plan data from Google Sheet...
+            </div>
+            <div id="error-message" class="hidden"></div>
             </main>
     </div>
 
 <script>
-const marathonPlan = {
-    philosophy: {
-        title: "Training Philosophy: The 80/20 Approach",
-        content: [
-            "This plan is built on a polarized training model, often referred to as the <strong>80/20 rule</strong>.",
-            "<strong>80% of your weekly running volume</strong> will be at a <strong>low intensity</strong> (easy, conversational pace). This builds your aerobic base, endurance, and resilience with lower injury risk.",
-            "<strong>20% of your weekly running volume</strong> will be at <strong>moderate to high intensity</strong> (tempo runs, interval training, marathon pace efforts). These sessions are key for improving speed, efficiency, and race-specific fitness.",
-            "<strong>Key Benefits:</strong> Maximizes aerobic development, minimizes risk of overtraining and injury, promotes sustainable long-term improvement."
-        ]
-    },
-    paceGuide: {
-        title: "General Pace Guide",
-        paces: [ // Simplified pace descriptions
-            "<strong>Easy Pace (E):</strong> Should feel comfortable and conversational.",
-            "<strong>Marathon Pace (MP):</strong> This is your target race pace for the marathon.",
-            "<strong>Tempo Pace (T):</strong> Comfortably hard, sustainable for 20-60 minutes.",
-            "<strong>Interval Paces (I):</strong> Vary based on the length and purpose of the interval (e.g., 5k pace, 10k pace).",
-            "<strong>Recovery Jog (RJ):</strong> Very slow, active recovery between intervals or after hard efforts.",
-            "<strong>Strides:</strong> Short accelerations (e.g., 4-6 x 100m or 20-30 seconds) after easy runs, focusing on good form and quick leg turnover. Not all-out sprints."
-        ]
-    },
-    generalNotes: {
-        title: "Important Notes Before You Start",
-        notes: [
-            "<strong>Listen to Your Body:</strong> This is a template. Adjust based on how you feel. If you're overly fatigued, take an extra rest day or reduce mileage.",
-            "<strong>Warm-up (WU) & Cool-down (CD):</strong> Always perform a 10-15 minute WU (easy jogging, dynamic stretches) before quality workouts and long runs, and a 10-15 minute CD (easy jogging, static stretches) afterwards.",
-            "<strong>Strength Training:</strong> Incorporate 2-3 sessions per week focusing on core strength, glute activation, and running-specific exercises. This is vital for injury prevention and maintaining form.",
-            "<strong>Nutrition & Hydration:</strong> Fuel your body appropriately. Practice your race day nutrition and hydration strategy during long runs in the specific phase.",
-            "<strong>Sleep:</strong> Aim for 7-9 hours of quality sleep per night. Recovery is when you get stronger.",
-            "<strong>Flexibility:</strong> Don't be afraid to swap days around to fit your schedule, but try to keep a similar pattern of hard/easy days."
-        ]
-    },
-    phases: [ // Phases and weeks data remains the same as in your provided code
-        {
-            name: "Preseason",
-            duration: "~5 Weeks (June 1 - July 6)",
-            goal: "Re-establish consistency, build an initial aerobic foundation, and prepare for increased training load. Focus on enjoying the runs and building good habits.",
-            mileageRange: "Gradually increasing from ~60km to ~75km.",
-            weeks: [
-                { weekNum: "June 1-2", totalKm: "~18-22 (Sat/Sun)", days: ["Sat: Easy Run 8-10km", "Sun: Easy Run 10-12km"], notes: "Starting the plan." },
-                { weekNum: 1, totalKm: "~60-65km", days: ["Mon: Rest or Active Recovery (30 min very easy jog or cross-train)", "Tue: Easy Run 10km + 4-6 x 80m Strides", "Wed: Easy Run 12km", "Thu: Fartlek: 10km total. WU, then 6 x (2 min moderate effort, 2 min easy jog), CD.", "Fri: Easy Run 8km", "Sat: Rest or Cross-Train", "Sun: Long Run 15km (easy pace)"], notes: "Focus on consistency. Add 1-2 light strength sessions." },
-                { weekNum: 2, totalKm: "~65-70km", days: ["Mon: Rest or Active Recovery", "Tue: Easy Run 10km. Towards the end, include 6 x 30 sec pick-ups / 90 sec easy.", "Wed: Easy Run 12km", "Thu: Easy Run 10km + 4-6 x 100m Strides", "Fri: Easy Run 8km", "Sat: Cross-Train or Rest", "Sun: Long Run 18km (easy pace)"], notes: "Continue with strength work." },
-                { weekNum: 3, totalKm: "~70-75km", days: ["Mon: Rest or Active Recovery", "Tue: Hills: 10km total. WU, then 6-8 x 45-60 sec hill repeats at a hard but controlled effort (jog down recovery), CD. If no hills, 6-8 x 200m @ 5k-10k effort on flat.", "Wed: Easy Run 12-14km", "Thu: Easy Run 10km + 4-6 x 100m Strides", "Fri: Easy Run 8km", "Sat: Rest", "Sun: Long Run 20km (easy pace)"], notes: "First taste of slightly more structured intensity." },
-                { weekNum: 4, totalKm: "~70km", days: ["Mon: Rest or Active Recovery", "Tue: Easy Run 10km + 4-6 x 80m Strides", "Wed: Easy Run 12km", "Thu: Fartlek: 10km total. WU, then 5 x (3 min moderate, 2 min easy), CD.", "Fri: Easy Run 8km", "Sat: Cross-Train or Rest", "Sun: Long Run 18km (easy pace)"], notes: "Slight down week. Absorb the training. Ensure good recovery." },
-                { weekNum: 5, totalKm: "~75km", days: ["Mon: Rest or Active Recovery", "Tue: Easy Run 12km", "Wed: Light Interval: 12km total. WU, then 8 x 400m @ 5k-10k pace with 400m jog recovery, CD.", "Thu: Easy Run 10km + 4-6 x 100m Strides", "Fri: Easy Run 8km", "Sat (Preseason): Rest", "Sun (Base Starts): Long Run 22km (easy pace)"], notes: "Transitioning into base building. Preseason ends July 6, Base begins July 7." }
-            ]
-        },
-        {
-            name: "Base Building",
-            duration: "~8 Weeks (July 7 - August 31)",
-            goal: "Significantly build aerobic capacity, increase weekly mileage (from 75km to 120km), and lengthen long runs. Introduce tempo runs and longer intervals.",
-            mileageRange: "75km gradually increasing to 120km.",
-            weeks: [
-                { weekNum: 6, totalKm: "~80km", days: ["Mon: Rest or Active Recovery (40 min very easy jog or XT)", "Tue: Intervals: 14km total. WU, 5 x 1000m @ 10k pace (or slightly faster) with 400-600m jog recovery, CD.", "Wed: Easy Run 12km", "Thu: Tempo Run: 14km total. WU, 20-25 min @ Tempo Pace (T), CD.", "Fri: Easy Run 10km + 4-6 Strides", "Sat: Easy Run 8km", "Sun: Long Run 24km (easy pace)"], notes: "First week of true base building. Focus on quality recovery. 2-3 strength sessions." },
-                { weekNum: 7, totalKm: "~85km", days: ["Mon: Rest or Active Recovery", "Tue: Intervals: 15km total. WU, 6-7 x 800m @ 5k-10k pace with 400m jog recovery, CD.", "Wed: Easy Run 14km", "Thu: Easy Run 10km + 4-6 Strides", "Fri: Easy Run 10km", "Sat: Easy Run 8km or Rest", "Sun: Long Run 26km (easy pace)"], notes: "Mileage building steadily." },
-                { weekNum: 8, totalKm: "~90km", days: ["Mon: Rest or Active Recovery", "Tue: Tempo Run: 16km total. WU, 2 x 15 min @ Tempo Pace (T) with 5 min jog recovery between, CD.", "Wed: Easy Run 14km", "Thu: Easy Run 12km + 4-6 Strides", "Fri: Easy Run 10km", "Sat: Rest", "Sun: Long Run 28km (easy pace)"], notes: "Solid week of volume." },
-                { weekNum: 9, totalKm: "~80km", days: ["Mon: Rest or Active Recovery", "Tue: Intervals: 12km total. WU, 4 x 1000m @ 10k pace with 400m jog recovery, CD.", "Wed: Easy Run 12km", "Thu: Easy Run 10km + 4-6 Strides", "Fri: Easy Run 8km", "Sat: Cross-Train or Rest", "Sun: Long Run 22km (easy pace)"], notes: "Down Week. Recovery week to absorb training." },
-                { weekNum: 10, totalKm: "~95km", days: ["Mon: Rest or Active Recovery", "Tue: Intervals: 16km total. WU, 4 x 1200m @ 10k pace (or slightly faster than T) with 600m jog recovery, CD.", "Wed: Easy Run 15km", "Thu: Tempo Run: 16km total. WU, 30 min @ Tempo Pace (T), CD.", "Fri: Easy Run 10km + 4-6 Strides", "Sat: Easy Run 8km", "Sun: Long Run 30km (easy pace)"], notes: "Hitting higher mileage. Ensure good fueling for long runs." },
-                { weekNum: 11, totalKm: "~105km", days: ["Mon: Rest or Active Recovery", "Tue: Intervals: 17km total. WU, 3 x 1600m (1 mile) @ slightly faster than 10k pace with 800m jog recovery, CD.", "Wed: Easy Run 16km", "Thu: Easy Run 12km + 4-6 Strides", "Fri: Easy Run 10km", "Sat: Easy Run 10km or Rest", "Sun: Long Run 32km (easy pace, consider adding a few km @ MP in the middle if feeling good, e.g., last 5-8km)"], notes: "Longest run so far." },
-                { weekNum: 12, totalKm: "~115-120km", days: ["Mon: Rest or Active Recovery", "Tue: Tempo Run: 18km total. WU, 20 min @ T, 5 min RJ, 15 min @ T, CD.", "Wed: Easy Run 18km", "Thu: Easy Run 14km + 4-6 Strides", "Fri: Easy Run 10km", "Sat: Easy Run 10km", "Sun: Long Run 28km (pull back slightly on distance, but good quality effort)"], notes: "Peak Base Week. Peak mileage for the base phase. Focus on recovery." },
-                { weekNum: 13, totalKm: "~110km", days: ["Mon: Rest or Active Recovery", "Tue: Intervals: 16km total. WU, 5-6 x 1000m @ 10k pace with 400m jog recovery, CD.", "Wed: Easy Run 16km", "Thu: Easy Run 12km + 4-6 Strides", "Fri: Easy Run 10km", "Sat (Base Ends): Easy Run 8km", "Sun (Specific Starts): Long Run 30km with 10km @ MP in the second half."], notes: "Transition Week. Base phase ends Aug 31st, Marathon Specific begins Sep 1st." }
-            ]
-        },
-        {
-            name: "Marathon Specific",
-            duration: "~7.5 Weeks (September 1 - October 22)",
-            goal: "Peak weekly mileage (up to 140km), focus on marathon pace workouts and simulations. Sharpen race fitness.",
-            mileageRange: "110km building up to 140km, then slight reduction.",
-            weeks: [
-                { weekNum: 14, totalKm: "~120km", days: ["Mon: Rest or Active Recovery", "Tue: MP Intervals: 18km total. WU, 3 x 3km @ MP with 1km easy jog recovery, CD.", "Wed: Easy Run 18km", "Thu: Tempo Run: 16km total. WU, 8km @ T (continuous), CD.", "Fri: Easy Run 12km + 4-6 Strides", "Sat: Easy Run 10km", "Sun: Long Run 32km with 12-14km @ MP (e.g., middle 14k or last 12k)"], notes: "Introducing more marathon pace work." },
-                { weekNum: 15, totalKm: "~125km", days: ["Mon: Rest or Active Recovery", "Tue: Intervals: 18km total. WU, 6 x 1km @ 10k pace, then 4 x 400m @ 5k pace. (Recovery 400m jog / 200m jog), CD.", "Wed: Easy Run 18km", "Thu: MP Progression Run: 16km total. WU, 6km E, 6km @ MP, 2km @ T, CD.", "Fri: Easy Run 12km + 4-6 Strides", "Sat: Easy Run 10km", "Sun: Long Run 34km with 16km @ MP (can be continuous or broken e.g. 2 x 8km @ MP)"], notes: "Practice race day fueling on long runs." },
-                { weekNum: 16, totalKm: "~130km", days: ["Mon: Rest or Active Recovery", "Tue: MP Intervals: 20km total. WU, 2 x 5km @ MP with 1km easy jog recovery, CD.", "Wed: Easy Run 20km", "Thu: Tempo Run: 18km total. WU, 3 x 3km @ T with 5 min jog recovery, CD.", "Fri: Easy Run 12km + 4-6 Strides", "Sat: Easy Run 10km", "Sun: Long Run 30km (slightly less distance, but good effort, maybe some MP miles if feeling good, e.g. 8-10km)"], notes: "High volume, ensure adequate recovery." },
-                { weekNum: 17, totalKm: "~135km", days: ["Mon: Rest or Active Recovery", "Tue: Key Workout: 20km total. WU, 10km @ MP, 5 min RJ, then 5 x 1km @ 10k pace (400m RJ), CD.", "Wed: Easy Run 20km", "Thu: Easy Run 15km", "Fri: Easy Run 12km + 4-6 Strides", "Sat: Easy Run 10km", "Sun: Long Run 35-37km with 18-20km @ MP (major race simulation)."], notes: "Peak Week 1. Test your race day gear, nutrition, and hydration." },
-                { weekNum: 18, totalKm: "~140km", days: ["Mon: Rest or Active Recovery", "Tue: MP Intervals: 20km total. WU, 4 x 3km @ MP with 1km easy jog recovery, CD.", "Wed: Easy Run 20km", "Thu: Medium Long Run with MP: 18km total. WU, 10km E, then 6km @ MP, CD.", "Fri: Easy Run 12km + 4-6 Strides", "Sat: Easy Run 10km", "Sun: Long Run 25km (reduced distance, mostly easy, maybe last 5km @ MP if feeling good)"], notes: "Peak Week 2. Max volume week. Recovery is paramount." },
-                { weekNum: 19, totalKm: "~125km", days: ["Mon: Rest or Active Recovery", "Tue: Tempo Run: 16km total. WU, 25 min @ T, CD.", "Wed: Easy Run 18km", "Thu: Easy Run 12km + 4-6 Strides", "Fri: Easy Run 10km", "Sat: Rest or very short Easy Run 6-8km", "Sun: Long Run 28-30km with 10-12km @ MP."], notes: "Down Week. Mileage drops a bit to absorb the peak weeks." },
-                { weekNum: 20, totalKm: "~110-115km", days: ["Mon: Rest or Active Recovery", "Tue: MP Workout: 16km total. WU, 8km @ MP continuous, CD.", "Wed: Easy Run 16km", "Thu: Intervals: 14km total. WU, 8 x 800m @ 10k pace (400m RJ), CD.", "Fri: Easy Run 10km + 4-6 Strides", "Sat: Easy Run 8km", "Sun: Long Run 20-22km (last run over 20km, mostly easy, maybe 5km @ MP)"], notes: "Last Big Week. Starting to reduce volume, but maintain some quality." },
-                { weekNum: 21, totalKm: "~80-90km", days: ["Mon (Specific): Easy Run 12km", "Tue (Specific): Short MP: 10km total. WU, 3-4km @ MP, CD.", "Wed (Taper Starts): Rest or Very Easy Run 6-8km", "Thu: Easy Run 10km + 4 Strides", "Fri: Light Intervals: 8km total. WU, 6 x 400m @ 10k pace (400m RJ), CD.", "Sat: Easy Run 8km", "Sun: Long Run 15-16km (easy pace)"], notes: "Transition Week. Specific phase ends Oct 22nd, Taper begins Oct 23rd. Taper begins! Focus on feeling fresh." }
-            ]
-        },
-        {
-            name: "Taper",
-            duration: "~2.5 Weeks (October 23 - November 9)",
-            goal: "Reduce training volume significantly while maintaining some intensity to stay sharp. Allow the body to fully recover and store energy for race day.",
-            mileageRange: "Race Day: November 9th (Saturday)",
-            weeks: [
-                { weekNum: 22, totalKm: "~60km", days: ["Mon: Rest or Active Recovery (30 min very easy jog or XT)", "Tue: Short Tempo: 8km total. WU, 10-15 min @ T, CD.", "Wed: Easy Run 8km", "Thu: Easy Run 6km + 4 Strides", "Fri: Rest", "Sat: Easy Run 10km (gentle, feel-good pace)", "Sun: Easy Run 6-8km"], notes: "Significant reduction in volume. Trust the taper. Focus on sleep, nutrition, hydration." },
-                { weekNum: 23, totalKm: "~40-50km + Race", days: ["Mon: Rest", "Tue: Very Short Intervals: 6km total. WU, 3-4 x 400m @ 10k pace (or slightly faster, but controlled), long recovery, CD. (Shakeout, stay sharp)", "Wed: Easy Run 5-6km + 2-3 Strides", "Thu: Rest or Very Easy Run 3-4km (shakeout)", "Fri: Rest (prepare gear, hydrate, relax)", "Sat: RACE DAY! Execute your race plan! Pre-race routine (WU, drills).", "Sun: CELEBRATE! (Very light active recovery if desired, like a short walk)"], notes: "Race Week!" }
-            ]
-        }
-    ]
-};
+// --- Configuration ---
+// !!! REPLACE THIS WITH YOUR GOOGLE APPS SCRIPT WEB APP URL !!!
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby0Fn_ePTii0C_DWoqsH5tJhRC_zl1Ww42NtjGLahiIFRPERNIHiOUIx2c83Kad9hTKTA/exec';
 
+// --- Global Variables ---
+let marathonPlan = null; // This will be populated by the fetched data
 const appContent = document.getElementById('app-content');
+const loadingMessageDiv = document.getElementById('loading-message');
+const errorMessageDiv = document.getElementById('error-message');
 let mileageChartInstance = null;
 
+// --- Data Fetching and Initialization ---
+async function fetchMarathonPlan() {
+    try {
+        const response = await fetch(WEB_APP_URL);
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Network response was not ok: ${response.status} ${response.statusText}. Details: ${errorText}`);
+        }
+        const data = await response.json();
+        if (data.error) {
+            throw new Error(`Error from Google Sheet App: ${data.error}`);
+        }
+        if (!data.philosophy || !data.phases || !data.paceGuide || !data.generalNotes) {
+            console.error("Fetched data is missing essential properties:", data);
+            throw new Error("Fetched data is incomplete or has an unexpected structure. Check the Apps Script `doGet` function and the Google Sheet structure.");
+        }
+        marathonPlan = data; // Assign fetched data to global variable
+        initializeApp(); // Initialize the UI with the fetched data
+    } catch (error) {
+        console.error('Failed to fetch marathon plan:', error);
+        loadingMessageDiv.classList.add('hidden');
+        errorMessageDiv.textContent = `Error loading training plan: ${error.message}. Please ensure the Google Sheet is accessible and the Apps Script is deployed correctly. You might need to check the Apps Script logs for more details.`;
+        errorMessageDiv.classList.remove('hidden');
+    }
+}
+
+function initializeApp() {
+    loadingMessageDiv.classList.add('hidden');
+    errorMessageDiv.classList.add('hidden');
+    appContent.innerHTML = ''; // Clear loading/error messages before rendering actual content
+
+    // Setup navigation listeners
+    document.getElementById('nav-overview').addEventListener('click', renderOverview);
+    document.getElementById('nav-plan').addEventListener('click', renderTrainingPlan);
+    document.getElementById('nav-utils').addEventListener('click', renderPaceUtilities);
+    
+    renderOverview(); // Load overview page by default
+}
+
+// --- Navigation and Rendering Functions (Mostly unchanged, but now use the global 'marathonPlan') ---
 function setActiveNav(activeId) {
     document.querySelectorAll('.nav-button').forEach(btn => {
         btn.classList.remove('active');
@@ -264,14 +244,17 @@ function setActiveNav(activeId) {
 }
 
 function createHtmlList(items) {
-    // Strip HTML tags for plain text list items if needed for other contexts,
-    // but for direct HTML rendering, keep them.
+    if (!items || !Array.isArray(items)) return ''; // Guard against undefined or non-array items
     return `<ul class="list-disc list-inside space-y-1 text-stone-700">${items.map(item => `<li>${item}</li>`).join('')}</ul>`;
 }
 
 function renderOverview() {
+    if (!marathonPlan) return; // Don't render if data isn't loaded
     setActiveNav('nav-overview');
-    appContent.innerHTML = `
+    // Clear only the dynamic content area within appContent if it exists, or set innerHTML of appContent
+    const dynamicContentArea = appContent.querySelector('#overview-content') || appContent;
+
+    dynamicContentArea.innerHTML = `
         <section id="overview-content" class="space-y-6">
             <div class="content-card">
                 <h2 class="text-xl sm:text-2xl font-semibold text-sky-700 mb-3">${marathonPlan.philosophy.title}</h2>
@@ -283,7 +266,7 @@ function renderOverview() {
                 <div class="chart-container bg-white p-2 rounded-md shadow">
                     <canvas id="mileageChart"></canvas>
                 </div>
-                <p class="text-xs text-stone-500 mt-2 text-center">Hover over points to see weekly mileage. Note: 'June 1-2' is introductory, actual Week 1 starts after.</p>
+                <p class="text-xs text-stone-500 mt-2 text-center">Hover over points to see weekly mileage. Note: Some introductory/final week mileages might be approximate.</p>
             </div>
 
             <div class="content-card">
@@ -301,6 +284,7 @@ function renderOverview() {
 }
 
 function renderMileageChart() {
+    if (!marathonPlan || !marathonPlan.phases) return;
     const chartCanvas = document.getElementById('mileageChart');
     if (!chartCanvas) return;
 
@@ -308,17 +292,26 @@ function renderMileageChart() {
     const dataPoints = [];
     
     marathonPlan.phases.forEach(phase => {
+        if (!phase.weeks || !Array.isArray(phase.weeks)) {
+            console.warn("Phase missing weeks array:", phase.name);
+            return; // Skip this phase if weeks are missing
+        }
         phase.weeks.forEach(week => {
             labels.push(`W${week.weekNum}`);
             let kmValue = 0;
             if (typeof week.totalKm === 'string') {
-                const match = week.totalKm.match(/~(\d+)/); // Extracts first number after ~
-                if (match) kmValue = parseInt(match[1], 10);
-                else { // Handle cases like "~40-50km + Race"
+                const match = week.totalKm.match(/~(\d+)/); 
+                if (match) {
+                    kmValue = parseInt(match[1], 10);
+                } else { 
                     const rangeMatch = week.totalKm.match(/~(\d+)-(\d+)/);
-                    if (rangeMatch) kmValue = parseInt(rangeMatch[1], 10); // Use lower end of range
+                    if (rangeMatch) kmValue = parseInt(rangeMatch[1], 10); 
+                    else { // Handle cases like "40-50km + Race" or just numbers without ~
+                        const directMatch = week.totalKm.match(/(\d+)/);
+                        if(directMatch) kmValue = parseInt(directMatch[1],10);
+                    }
                 }
-            } else {
+            } else if (typeof week.totalKm === 'number') {
                 kmValue = week.totalKm; 
             }
             dataPoints.push(kmValue);
@@ -336,14 +329,14 @@ function renderMileageChart() {
             datasets: [{
                 label: 'Planned Weekly Kilometers',
                 data: dataPoints,
-                borderColor: '#0d9488', // teal-600
-                backgroundColor: 'rgba(13, 148, 136, 0.1)', // teal-600 with alpha
+                borderColor: '#0d9488', 
+                backgroundColor: 'rgba(13, 148, 136, 0.1)',
                 tension: 0.1,
                 fill: true,
-                pointBackgroundColor: '#0d9488', // teal-600
+                pointBackgroundColor: '#0d9488',
                 pointBorderColor: '#fff',
                 pointHoverRadius: 7,
-                pointHoverBackgroundColor: '#0d9488' // teal-600
+                pointHoverBackgroundColor: '#0d9488'
             }]
         },
         options: {
@@ -360,9 +353,7 @@ function renderMileageChart() {
                         autoSkip: true,
                         maxTicksLimit: 20, 
                         callback: function(value, index, values) {
-                            const label = this.getLabelForValue(value);
-                             // No label wrapping, Chart.js handles this fairly well with autoSkip
-                            return label;
+                            return this.getLabelForValue(value);
                         }
                     }
                 }
@@ -389,12 +380,15 @@ function renderMileageChart() {
 }
 
 function renderTrainingPlan() {
+    if (!marathonPlan) return;
     setActiveNav('nav-plan');
+    const dynamicContentArea = appContent.querySelector('#training-plan-content') || appContent;
+
     const phaseButtonsHtml = marathonPlan.phases.map((phase, index) =>
         `<button class="phase-button" data-phase-index="${index}">${phase.name}</button>`
     ).join('');
 
-    appContent.innerHTML = `
+    dynamicContentArea.innerHTML = `
         <section id="training-plan-content" class="space-y-6">
             <div>
                 <h2 class="text-xl sm:text-2xl font-semibold text-sky-700 mb-4">Select Training Phase:</h2>
@@ -405,8 +399,7 @@ function renderTrainingPlan() {
                     <p class="text-stone-600 italic">Select a phase to see its details and weekly breakdown.</p>
                 </div>
             </div>
-            <div id="week-details-container" class="mt-6">
-                </div>
+            <div id="week-details-container" class="mt-6"></div>
         </section>
     `;
 
@@ -418,8 +411,7 @@ function renderTrainingPlan() {
             renderPhaseDetails(phaseIndex);
         });
     });
-     // Automatically select and render the first phase if available
-    if (marathonPlan.phases.length > 0) {
+    if (marathonPlan.phases && marathonPlan.phases.length > 0) {
         const firstPhaseButton = document.querySelector('#phase-navigation .phase-button');
         if (firstPhaseButton) {
             firstPhaseButton.classList.add('active');
@@ -429,9 +421,15 @@ function renderTrainingPlan() {
 }
 
 function renderPhaseDetails(phaseIndex) {
+    if (!marathonPlan) return;
     const phase = marathonPlan.phases[phaseIndex];
+    if (!phase) {
+        console.error("Phase not found for index:", phaseIndex);
+        document.getElementById('phase-details').innerHTML = '<p class="text-red-500">Error: Could not load phase details.</p>';
+        return;
+    }
     const phaseDetailsDiv = document.getElementById('phase-details');
-    document.getElementById('week-details-container').innerHTML = ''; // Clear previous week details
+    document.getElementById('week-details-container').innerHTML = ''; 
 
     const weekButtonsHtml = phase.weeks.map((week, index) =>
         `<button class="week-button" data-phase-index="${phaseIndex}" data-week-index="${index}">Week ${week.weekNum}</button>`
@@ -439,9 +437,9 @@ function renderPhaseDetails(phaseIndex) {
 
     phaseDetailsDiv.innerHTML = `
         <div class="content-card">
-            <h3 class="text-lg sm:text-xl font-semibold mb-2">${phase.name} (${phase.duration})</h3>
-            <p class="text-sm text-stone-600 mb-1"><strong>Goal:</strong> ${phase.goal}</p>
-            <p class="text-sm text-stone-600 mb-3"><strong>Mileage:</strong> ${phase.mileageRange}</p>
+            <h3 class="text-lg sm:text-xl font-semibold mb-2">${phase.name} (${phase.duration || 'N/A'})</h3>
+            <p class="text-sm text-stone-600 mb-1"><strong>Goal:</strong> ${phase.goal || 'N/A'}</p>
+            <p class="text-sm text-stone-600 mb-3"><strong>Mileage:</strong> ${phase.mileageRange || 'N/A'}</p>
             <h4 class="text-md font-medium text-stone-700 mb-2">Select a Week:</h4>
             <div id="week-navigation-${phaseIndex}" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
                 ${weekButtonsHtml}
@@ -459,8 +457,7 @@ function renderPhaseDetails(phaseIndex) {
         });
     });
 
-    // Automatically select and render the first week of the phase if available
-    if (phase.weeks.length > 0) {
+    if (phase.weeks && phase.weeks.length > 0) {
         const firstWeekButton = document.querySelector(`#week-navigation-${phaseIndex} .week-button`);
         if (firstWeekButton) {
             firstWeekButton.classList.add('active');
@@ -470,18 +467,24 @@ function renderPhaseDetails(phaseIndex) {
 }
 
 function renderWeekDetails(phaseIndex, weekIndex) {
+    if (!marathonPlan) return;
     const week = marathonPlan.phases[phaseIndex].weeks[weekIndex];
+    if (!week) {
+        console.error("Week not found for phase index:", phaseIndex, "week index:", weekIndex);
+        document.getElementById('week-details-container').innerHTML = '<p class="text-red-500">Error: Could not load week details.</p>';
+        return;
+    }
     const weekDetailsContainer = document.getElementById('week-details-container');
 
-    const dailyScheduleHtml = week.days.map(day => {
+    const dailyScheduleHtml = (week.days && Array.isArray(week.days)) ? week.days.map(day => {
         const parts = day.split(':');
         return `<li class="py-1"><strong class="text-teal-700">${parts[0]}:</strong> ${parts.slice(1).join(':').trim()}</li>`;
-    }).join('');
+    }).join('') : '<li>No daily schedule available.</li>';
 
     weekDetailsContainer.innerHTML = `
         <div class="content-card mt-4">
             <h4 class="text-lg font-semibold text-sky-700 mb-2">Schedule for Week ${week.weekNum}</h4>
-            <p class="text-sm text-stone-600 mb-1"><strong>Total Mileage:</strong> ${week.totalKm}</p>
+            <p class="text-sm text-stone-600 mb-1"><strong>Total Mileage:</strong> ${week.totalKm || 'N/A'}</p>
             <ul class="list-none space-y-1 text-sm text-stone-700 mb-2">
                 ${dailyScheduleHtml}
             </ul>
@@ -491,8 +494,10 @@ function renderWeekDetails(phaseIndex, weekIndex) {
 }
 
 function renderPaceUtilities() {
+    // Pace utilities are static and don't depend on marathonPlan data from the sheet
     setActiveNav('nav-utils');
-    appContent.innerHTML = `
+    const dynamicContentArea = appContent.querySelector('#pace-utils-content') || appContent;
+    dynamicContentArea.innerHTML = `
         <section id="pace-utils-content" class="space-y-6">
             <div class="content-card">
                 <h2 class="text-xl sm:text-2xl font-semibold text-sky-700 mb-4">Training Zone & Repeats Pace Calculator</h2>
@@ -528,7 +533,7 @@ function renderPaceUtilities() {
     `;
      document.getElementById('lt2speed').addEventListener('keypress', function(event) {
         if (event.key === 'Enter') {
-            event.preventDefault(); // Prevent form submission if it were in a form
+            event.preventDefault(); 
             calculatePacesFromUtil();
         }
     });
@@ -547,7 +552,7 @@ function parsePaceToSeconds(paceString) {
 function formatSecondsToPace(totalSeconds) {
     if (isNaN(totalSeconds) || totalSeconds < 0) return "N/A";
     const minutes = Math.floor(totalSeconds / 60);
-    const seconds = Math.round(totalSeconds % 60); // Round seconds to nearest whole number
+    const seconds = Math.round(totalSeconds % 60); 
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 }
 
@@ -555,41 +560,32 @@ function calculatePacesFromUtil() {
     const lt2SpeedInput = document.getElementById('lt2speed').value;
     const zonesContentDiv = document.getElementById('zones-content-util');
     const repeatsContentDiv = document.getElementById('repeats-content-util');
-    const errorMessageDiv = document.getElementById('error-message-calc');
+    const errorMessageDivCalc = document.getElementById('error-message-calc'); // Corrected ID
 
     zonesContentDiv.innerHTML = '<p class="text-stone-500 italic text-sm">Calculating...</p>';
     repeatsContentDiv.innerHTML = '<p class="text-stone-500 italic text-sm">Calculating...</p>';
-    errorMessageDiv.textContent = ''; // Clear previous error messages
+    if(errorMessageDivCalc) errorMessageDivCalc.textContent = ''; 
 
     const lt2SpeedInSeconds = parsePaceToSeconds(lt2SpeedInput);
 
     if (isNaN(lt2SpeedInSeconds) || lt2SpeedInSeconds <= 0) {
-        errorMessageDiv.textContent = 'Invalid LT2 speed. Use mm:ss format (e.g., 4:30). Pace must be positive.';
+        if(errorMessageDivCalc) errorMessageDivCalc.textContent = 'Invalid LT2 speed. Use mm:ss format (e.g., 4:30). Pace must be positive.';
         zonesContentDiv.innerHTML = '<p class="text-red-500 italic text-sm">Could not calculate zones due to invalid input.</p>';
         repeatsContentDiv.innerHTML = '<p class="text-red-500 italic text-sm">Could not calculate repeats paces due to invalid LT2 input.</p>';
         return;
     }
 
-    // Zone definitions based on percentage of LT2 pace (seconds per km)
-    // Slower pace = higher percentage of time (e.g., 120% of LT2 time means LT2_seconds * 1.2)
-    // Faster pace = lower percentage of time (e.g., 80% of LT2 time means LT2_seconds * 0.8)
-    // The percentages here are for EFFORT, so for PACE (time), we invert.
-    // E.g. Zone 1 (Easy) is 60-75% of LT2 *effort*. So pace is LT2_pace / 0.75 to LT2_pace / 0.60
     const zonesData = [
-        // { name: "Zone 1", descriptor: "Recovery", lowPercentEffort: 0, highPercentEffort: 65, colorClass: "text-blue-500" },
-        { name: "Zone 1", descriptor: "Easy/Recovery", lowPaceFactor: 1.54, highPaceFactor: 1.33, colorClass: "text-green-600" }, // Approx 65% to 75% LT2 HR/Effort
-        { name: "Zone 2", descriptor: "Aerobic/Base", lowPaceFactor: 1.32, highPaceFactor: 1.16, colorClass: "text-sky-600" }, // Approx 76% to 86% LT2 HR/Effort
-        { name: "Zone 3", descriptor: "Tempo/Marathon", lowPaceFactor: 1.15, highPaceFactor: 1.01, colorClass: "text-lime-600" }, // Approx 87% to 99% LT2 HR/Effort
-        { name: "Zone 4", descriptor: "Threshold", lowPaceFactor: 1.00, highPaceFactor: 0.91, colorClass: "text-amber-500" }, // Approx 100% to 110% LT2 HR/Effort (LT2 is 100%)
-        { name: "Zone 5", descriptor: "VO2 Max", lowPaceFactor: 0.90, highPaceFactor: 0.83, colorClass: "text-red-600" } // Approx 111% to 120% LT2 HR/Effort
+        { name: "Zone 1", descriptor: "Easy/Recovery", lowPaceFactor: 1.54, highPaceFactor: 1.33, colorClass: "text-green-600" }, 
+        { name: "Zone 2", descriptor: "Aerobic/Base", lowPaceFactor: 1.32, highPaceFactor: 1.16, colorClass: "text-sky-600" }, 
+        { name: "Zone 3", descriptor: "Tempo/Marathon", lowPaceFactor: 1.15, highPaceFactor: 1.01, colorClass: "text-lime-600" }, 
+        { name: "Zone 4", descriptor: "Threshold", lowPaceFactor: 1.00, highPaceFactor: 0.91, colorClass: "text-amber-500" }, 
+        { name: "Zone 5", descriptor: "VO2 Max", lowPaceFactor: 0.90, highPaceFactor: 0.83, colorClass: "text-red-600" } 
     ];
-    // Race pace is often around high Zone 3 / low Zone 4, or 90-95% of LT2 pace for some models.
-    // For simplicity, we can show a Marathon Pace (MP) based on a common factor or relate it to LT2.
-    // A common estimate for Marathon Pace is around 110-115% of LT2 *time*. So LT2_seconds * 1.1 to LT2_seconds * 1.15
     const racePaceInfo = { name: "Marathon Pace (Est.)", descriptor: "", lowPaceFactor: 1.15, highPaceFactor: 1.10, colorClass: "text-purple-600" };
 
 
-    zonesContentDiv.innerHTML = ''; // Clear "Calculating..."
+    zonesContentDiv.innerHTML = ''; 
     const zonesTable = document.createElement('table');
     zonesTable.classList.add('data-table', 'text-sm', 'w-full');
     zonesTable.innerHTML = `<thead><tr><th class="bg-stone-100 text-left p-2">Zone</th><th class="bg-stone-100 text-left p-2">Pace Range (/km)</th></tr></thead><tbody></tbody>`;
@@ -606,20 +602,16 @@ function calculatePacesFromUtil() {
     zonesContentDiv.appendChild(zonesTable);
     zonesContentDiv.insertAdjacentHTML('beforeend', '<p class="text-xs text-stone-500 mt-2">Pace factors are estimates. Adjust based on feel and specific training goals.</p>');
 
-
-    // Repeats paces are usually faster than LT2 pace.
-    // E.g., 1000m repeats might be at 95-100% of LT2 pace (time-wise)
-    // 400m repeats might be at 85-90% of LT2 pace (time-wise)
     const repeatDistances = [
-        { distance: "3000m", paceFactor: 1.02 }, // Slightly slower than LT2, or around LT2
-        { distance: "1600m (Mile)", paceFactor: 0.98 }, // Slightly faster than LT2
+        { distance: "3000m", paceFactor: 1.02 }, 
+        { distance: "1600m (Mile)", paceFactor: 0.98 }, 
         { distance: "1000m", paceFactor: 0.95 },
         { distance: "800m",  paceFactor: 0.92 },
         { distance: "400m",  paceFactor: 0.88 },
         { distance: "200m",  paceFactor: 0.85 }
     ];
 
-    repeatsContentDiv.innerHTML = ''; // Clear "Calculating..."
+    repeatsContentDiv.innerHTML = ''; 
     const repeatsTable = document.createElement('table');
     repeatsTable.classList.add('data-table', 'text-sm', 'w-full');
     repeatsTable.innerHTML = `<thead><tr><th class="bg-stone-100 text-left p-2">Distance</th><th class="bg-stone-100 text-left p-2">Target Time per Repeat</th><th class="bg-stone-100 text-left p-2">Equivalent Pace (/km)</th></tr></thead><tbody></tbody>`;
@@ -630,7 +622,7 @@ function calculatePacesFromUtil() {
         
         let distanceMultiplier = 1; 
         if (item.distance === "3000m") distanceMultiplier = 3;
-        else if (item.distance === "1600m (Mile)") distanceMultiplier = 1.60934; // Approximate
+        else if (item.distance === "1600m (Mile)") distanceMultiplier = 1.60934; 
         else if (item.distance === "1000m") distanceMultiplier = 1;
         else if (item.distance === "800m") distanceMultiplier = 0.8;
         else if (item.distance === "400m") distanceMultiplier = 0.4;
@@ -647,13 +639,9 @@ function calculatePacesFromUtil() {
     repeatsContentDiv.insertAdjacentHTML('beforeend', '<p class="text-xs text-stone-500 mt-2">Target times are estimates. Adjust based on the number of reps and recovery.</p>');
 }
 
-
-// Initial setup
-document.getElementById('nav-overview').addEventListener('click', renderOverview);
-document.getElementById('nav-plan').addEventListener('click', renderTrainingPlan);
-document.getElementById('nav-utils').addEventListener('click', renderPaceUtilities);
-
-renderOverview(); // Load overview page by default
+// --- Initial Load ---
+// Start fetching data when the script loads
+fetchMarathonPlan();
 
 </script>
 </body>
