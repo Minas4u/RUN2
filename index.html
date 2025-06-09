@@ -176,10 +176,10 @@
             text-align: center; 
             padding: 0.5rem 0.75rem; 
             display: inline-block; 
-            border-top: 3px solid #f59e0b;  
+            border-top: 3px solid #f59e0b;    
             border-right: 3px solid #0284c7;  
             border-bottom: 3px solid #0284c7; 
-            border-left: 3px solid #f59e0b;  
+            border-left: 3px solid #f59e0b;   
             margin-bottom: 0.75rem; 
         }
         @media (min-width: 640px) {
@@ -256,7 +256,7 @@
 
         .custom-rect-border-nav { /* For nav tabs */
             border-top: 3px solid #f59e0b;    /* Yellow */
-            border-right: 3px solid #0284c7;   /* Blue */
+            border-right: 3px solid #0284c7;    /* Blue */
             border-bottom: 3px solid #0284c7; /* Blue */
             border-left: 3px solid #f59e0b;    /* Yellow */
             padding: 0.75rem !important; /* Unified padding */
@@ -264,14 +264,14 @@
         }
         .custom-rect-border-today { /* For today's training card */
             border-top: 3px solid #f59e0b !important;    /* Yellow */
-            border-right: 3px solid #0284c7 !important;   /* Blue */
+            border-right: 3px solid #0284c7 !important;    /* Blue */
             border-bottom: 3px solid #0284c7 !important; /* Blue */
             border-left: 3px solid #f59e0b !important;    /* Yellow */
             border-style: solid !important;
         }
         .custom-rect-border-this-week { /* For this week's plan card */
             border-top: 3px solid #15803d !important;    /* Green */
-            border-left: 3px solid #15803d !important;   /* Green */
+            border-left: 3px solid #15803d !important;    /* Green */
             border-bottom: 3px solid #dc2626 !important; /* Red */
             border-right: 3px solid #dc2626 !important;  /* Red */
             border-style: solid !important;
@@ -428,7 +428,52 @@
             border-left-width: 4px;
             border-left-color: #6366f1;
         }
-
+        
+        /* --- Updates Modal --- */
+        #updates-modal .updates-modal-content-wrapper {
+            background-color: #f8fafc; /* A very light blue/gray */
+            border-radius: 0.75rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 36rem; /* 576px */
+            padding: 1.5rem;
+            position: relative;
+            max-height: 80vh; /* Make it scrollable if content is long */
+            overflow-y: auto;
+        }
+        #updates-modal .updates-modal-content-wrapper h2 {
+            background: linear-gradient(to right, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        #close-updates-modal-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            color: #9ca3af;
+            background-color: #f3f4f6;
+            border-radius: 9999px;
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease-in-out;
+            z-index: 10;
+        }
+        #close-updates-modal-btn:hover {
+            color: #1f2937;
+            background-color: #e5e7eb;
+            transform: rotate(90deg);
+        }
+        #updates-modal .updates-card {
+            border-left-width: 4px;
+            border-left-color: #6366f1;
+            background-color: #ffffff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
 
         @media print {
             body {
@@ -459,7 +504,7 @@
                 background-color: white !important; 
                 font-size: 11pt !important; 
                 box-shadow: none !important;
-                border: none !important;      
+                border: none !important;     
             }
             
             #print-section-container .currently-printing-this-week h4,
@@ -494,7 +539,7 @@
                 page-break-after: auto !important;
              }
             #print-section-container .currently-printing-this-week .schedule-table td:first-child {
-                font-weight: bold !important;
+                 font-weight: bold !important;
             }
 
             #print-section-container .currently-printing-this-week p.italic {
@@ -518,6 +563,7 @@
             .calendar-grid, 
             #this-weeks-plan-card, 
             #mileage-chart-modal,
+            #updates-modal,
             #training-plan-content .chart-container, 
             .chart-container p,
             #calendar-selected-day-header, 
@@ -648,7 +694,6 @@
                 Running...
             </div>
             <div id="login-error-message" class="hidden"></div>
-            <div id="login-updates-container" class="mt-8"></div>
         </div>
     </div>
 
@@ -696,6 +741,17 @@
             </div>
         </div>
     </div>
+    
+    <!-- Team Updates Modal -->
+    <div id="updates-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-[60]">
+        <div class="updates-modal-content-wrapper">
+             <button id="close-updates-modal-btn">&times;</button>
+             <div id="updates-modal-content">
+                <!-- Content will be injected by JS -->
+             </div>
+        </div>
+    </div>
+
 
 <script>
 // Hardcoded fallback for race date if not provided by the data source.
@@ -907,13 +963,26 @@ function initializeApp() {
     document.getElementById('nav-info').addEventListener('click', renderInfoTab);
     
     // Add event listeners for the mileage chart modal
-    const modal = document.getElementById('mileage-chart-modal');
-    const closeModalBtn = document.getElementById('closeMileageChartBtn');
-    if(modal && closeModalBtn) {
-        closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
-        modal.addEventListener('click', (e) => {
+    const mileageModal = document.getElementById('mileage-chart-modal');
+    const closeMileageBtn = document.getElementById('closeMileageChartBtn');
+    if(mileageModal && closeMileageBtn) {
+        closeMileageBtn.addEventListener('click', () => mileageModal.classList.add('hidden'));
+        mileageModal.addEventListener('click', (e) => {
             if (e.target.id === 'mileage-chart-modal') {
-                modal.classList.add('hidden');
+                mileageModal.classList.add('hidden');
+            }
+        });
+    }
+
+    // Add event listeners for the new updates modal
+    const updatesModal = document.getElementById('updates-modal');
+    const closeUpdatesBtn = document.getElementById('close-updates-modal-btn');
+    if(updatesModal && closeUpdatesBtn) {
+        closeUpdatesBtn.addEventListener('click', () => updatesModal.classList.add('hidden'));
+        updatesModal.addEventListener('click', (e) => {
+             // Closes modal if user clicks on the background overlay
+            if (e.target.id === 'updates-modal') {
+                updatesModal.classList.add('hidden');
             }
         });
     }
@@ -921,6 +990,9 @@ function initializeApp() {
     renderOverview(); // Render the default "Overview" tab.
     mainAppWrapper.classList.remove('hidden');
     loginContainer.classList.add('hidden');
+    
+    // Show the updates modal after the main app is visible.
+    showUpdatesModalIfNeeded(); 
 }
 
 /**
@@ -1253,7 +1325,7 @@ function renderTodaysTraining() {
 
     let activityContentHtml = '';
     let titleHtml = `<h3 class="text-2xl font-semibold text-sky-700 mb-1 text-center">Today</h3>
-                             <p class="text-xs text-stone-500 text-center mb-3">${formatDate(today, { weekday: 'long', month: 'long', day: 'numeric' })}</p>`;
+                               <p class="text-xs text-stone-500 text-center mb-3">${formatDate(today, { weekday: 'long', month: 'long', day: 'numeric' })}</p>`;
     let notesBoxHtml = '';
     const todayCard = document.getElementById('todays-training-card');
 
@@ -1272,7 +1344,7 @@ function renderTodaysTraining() {
         const paceString = getPaceStringForActivity(todaysActivity.activity, lt2PaceString);
         let paceHtml = '';
         if (paceString) {
-             paceHtml = `<p class="pace-text text-base font-semibold mt-1 ${colorClass}">Pace: ${paceString}</p>`;
+             paceHtml = `<p class="pace-text text-lg font-semibold mt-1 ${colorClass}">Pace: ${paceString}</p>`;
         }
 
         activityContentHtml = `
@@ -1354,7 +1426,7 @@ function renderThisWeeksPlan() {
         }
     }
     if (datedTrainingPlan.length === 0) {
-       container.innerHTML = `<h3 class="text-2xl font-semibold text-green-700 mb-1 text-center">${thisWeeksPlanTitle}</h3><p class="text-stone-600 text-center">Training plan not loaded or is empty.</p>`;
+         container.innerHTML = `<h3 class="text-2xl font-semibold text-green-700 mb-1 text-center">${thisWeeksPlanTitle}</h3><p class="text-stone-600 text-center">Training plan not loaded or is empty.</p>`;
         return;
     }
 
@@ -1531,30 +1603,33 @@ async function renderOverview() {
 }
 
 /**
- * Renders the Team Updates section on the login page.
+ * Fetches and displays Team Updates in a dismissible modal if they exist.
  */
-async function renderTeamUpdates() {
-    const container = document.getElementById('login-updates-container');
-    if (!container) return;
-    container.innerHTML = `<div class="text-center p-4 text-sky-600">Loading Updates...</div>`;
+async function showUpdatesModalIfNeeded() {
+    const modal = document.getElementById('updates-modal');
+    const container = document.getElementById('updates-modal-content');
+    if (!modal || !container) return;
+    
     try {
         await ensureCompanionData();
         if (!companionData || !companionData.updates || companionData.updates.length === 0) {
-             container.innerHTML = ''; // No updates, show nothing.
-             return;
+            return; // No updates, so we do nothing and the modal remains hidden.
         }
+        
         const list = companionData.updates.map(item => `
-        <div class="content-card updates-card">
+        <div class="updates-card mb-4">
             <h3 class="text-indigo-800 font-semibold text-xl mb-2">${item.title}</h3>
             <ul class="list-disc list-inside space-y-1 text-stone-700">
                 ${item.content.map(line => `<li>${line}</li>`).join('')}
             </ul>
-        </div>`).join('<div class="my-4"></div>');
-        container.innerHTML = `<h2 class="text-2xl font-bold text-indigo-700 mb-4 text-center">Team Updates</h2><div class="space-y-4">${list}</div>`;
+        </div>`).join('');
+        
+        container.innerHTML = `<h2 class="text-2xl font-bold text-center mb-4">Team Updates</h2><div class="space-y-4">${list}</div>`;
+        modal.classList.remove('hidden'); // Show the modal
 
     } catch(error) {
-        console.error("Failed to render team updates", error);
-        container.innerHTML = `<div class="content-card updates-card"><p class="text-red-500">Could not load team updates.</p></div>`;
+        console.error("Failed to show updates modal:", error);
+        // Do not show the modal if there's an error fetching data.
     }
 }
 
@@ -1614,7 +1689,7 @@ function getPhaseTitleBorderColor(phaseName) {
 function getPhaseTitleTextColorClass(phaseName) {
     const nameLower = phaseName.toLowerCase();
     if (nameLower.includes("preseason")) return "text-gray-600"; 
-    if (nameLower.includes("base")) return "text-sky-700";  
+    if (nameLower.includes("base")) return "text-sky-700";   
     if (nameLower.includes("specific")) return "text-green-700"; 
     if (nameLower.includes("taper")) return "text-red-700";   
     return "text-sky-700"; 
