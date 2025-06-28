@@ -1,0 +1,16 @@
+<svg width="100" height="100" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="intervalBody" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#dc2626"/><stop offset="100%" stop-color="#b91c1c"/></linearGradient>
+        <radialGradient id="spikeGradient"><stop offset="0%" stop-color="#f1f5f9"/><stop offset="100%" stop-color="#94a3b8"/></radialGradient>
+         <linearGradient id="intervalFire" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fde047"/><stop offset="100%" stop-color="#f97316"/></linearGradient>
+        <filter id="dropShadow5"><feGaussianBlur in="SourceAlpha" stdDeviation="1"/><feOffset dx="1" dy="2"/><feComponentTransfer><feFuncA type="linear" slope="0.3"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <g filter="url(#dropShadow5)">
+        <path d="M4 18.5H20C21.1 18.5 22 17.6 22 16.5V16C22 15.45 21.55 15 21 15H3C2.45 15 2 15.45 2 16V16.5C2 17.6 2.9 18.5 4 18.5Z" fill="#1f2937"/>
+        <path d="M6 18.5L5 21L7 21L6 18.5Z" fill="url(#spikeGradient)"/><path d="M10 18.5L9 21L11 21L10 18.5Z" fill="url(#spikeGradient)"/><path d="M14 18.5L13 21L15 21L14 18.5Z" fill="url(#spikeGradient)"/><path d="M18 18.5L17 21L19 21L18 18.5Z" fill="url(#spikeGradient)"/>
+        <path d="M4.5 15L10 9H18.5C20.16 9 21.5 10.34 21.5 12V14.5H4C4.16 14.66 4.33 14.83 4.5 15Z" fill="url(#intervalBody)"/>
+        <path d="M10 9.5 L12 11 L11 13 L13 14.5" stroke="#fecaca" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+        <path d="M12 9.5 L14 11 L13 13 L15 14.5" stroke="#fecaca" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+        <path d="M18 10 C 18.5 9, 19.5 9, 20 10 C 19.5 11, 18.5 11, 18 10 Z" fill="url(#intervalFire)"/>
+    </g>
+</svg>
