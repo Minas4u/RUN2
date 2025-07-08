@@ -509,9 +509,7 @@ const appSubtitle = document.getElementById('appSubtitle');
 const navOverview = document.getElementById('nav-overview');
 const navPlan = document.getElementById('nav-plan');
 const navCalendar = document.getElementById('nav-calendar');
-const navRace = document.getElementById('nav-race');
 const navCompanion = document.getElementById('nav-companion');
-const navInfo = document.getElementById('nav-info');
 const mileageChartModal = document.getElementById('mileage-chart-modal');
 const closeMileageChartBtn = document.getElementById('closeMileageChartBtn');
 const updatesModal = document.getElementById('updates-modal');
@@ -608,9 +606,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(navOverview) navOverview.textContent = 'Plan Overview';
     if(navPlan) navPlan.textContent = 'Training Plan';
     if(navCalendar) navCalendar.textContent = 'Calendar';
-    if(navRace) navRace.textContent = 'Race';
     if(navCompanion) navCompanion.textContent = 'Companion';
-    if(navInfo) navInfo.textContent = 'Info';
 
     if(loginButton) loginButton.addEventListener('click', handleLogin);
     if(userIdInput) userIdInput.addEventListener('keypress', (event) => { if (event.key === 'Enter') { event.preventDefault(); handleLogin(); }});
@@ -803,9 +799,7 @@ function initializeApp() {
         if(navOverview) navOverview.addEventListener('click', renderOverview);
         if(navPlan) navPlan.addEventListener('click', renderTrainingPlan);
         if(navCalendar) navCalendar.addEventListener('click', renderCalendarTab);
-        if(navRace) navRace.addEventListener('click', renderRaceTab);
         if(navCompanion) navCompanion.addEventListener('click', renderCompanionTab);
-        if(navInfo) navInfo.addEventListener('click', renderInfoTab);
 
         // Add event listeners for the mileage chart modal
         if(mileageChartModal && closeMileageChartBtn) {
@@ -1030,9 +1024,7 @@ function updateStaticUIText() {
     if(navOverview) navOverview.textContent = uiText.navButtonOverview || 'Plan Overview';
     if(navPlan) navPlan.textContent = uiText.navButtonPlan || 'Training Plan';
     if(navCalendar) navCalendar.textContent = uiText.navButtonCalendar || 'Calendar';
-    if(navRace) navRace.textContent = uiText.navButtonRace || 'Race';
     if(navCompanion) navCompanion.textContent = uiText.navButtonCompanion || 'Companion';
-    if(navInfo) navInfo.textContent = uiText.navButtonInfo || 'Info';
 }
 
 /**
@@ -1042,13 +1034,11 @@ function updateStaticUIText() {
 function setActiveNav(activeId) {
     const navButtons = document.querySelectorAll('.nav-button');
     navButtons.forEach(btn => {
-        btn.classList.remove('active-overview', 'active-plan', 'active-calendar', 'active-race', 'active-companion', 'active-info');
+        btn.classList.remove('active-overview', 'active-plan', 'active-calendar', 'active-companion');
         if (btn.id === activeId) {
             if (activeId === 'nav-overview') btn.classList.add('active-overview');
             else if (activeId === 'nav-plan') btn.classList.add('active-plan');
             else if (activeId === 'nav-calendar') btn.classList.add('active-calendar');
-            else if (activeId === 'nav-race') btn.classList.add('active-race');
-            else if (activeId === 'nav-info') btn.classList.add('active-info');
             else if (activeId === 'nav-companion') btn.classList.add('active-companion');
             else btn.classList.add('active-overview'); // Default active style.
         }
@@ -1839,122 +1829,6 @@ function renderSelectedCalendarDayDetails(date) {
     }
 }
 
-// --- RACE TAB FUNCTIONS ---
-
-function renderRaceTab() {
-    if (!marathonPlan || !marathonPlan.uiText || !marathonPlan.uiText.race || !marathonPlan.settings || !appContent) {
-        if(appContent) appContent.innerHTML = "<p>Race information is currently unavailable. Please check sheet configuration.</p>";
-        return;
-    }
-    setActiveNav('nav-race');
-    appContent.innerHTML = '';
-    const raceSection = document.createElement('section');
-    raceSection.id = "race-content";
-    raceSection.className = "space-y-6";
-
-    const uiTextRace = marathonPlan.uiText.race;
-    const raceName = marathonPlan.settings.raceName || "N/A";
-    const raceDateFormatted = currentRaceDate ? formatDate(currentRaceDate) : "N/A (Set Plan Start Date)";
-    const raceDistance = marathonPlan.settings.raceDistanceKm || "N/A";
-
-    let tacticsHtml = `<h3 class="text-xl font-semibold text-violet-700 mb-3">${uiTextRace.tacticsTitle || "Race Strategy & Tactics"}</h3>`;
-    if (marathonPlan.raceTactics) {
-        if (marathonPlan.raceTactics.pacing && Array.isArray(marathonPlan.raceTactics.pacing) && marathonPlan.raceTactics.pacing.length > 0) {
-            tacticsHtml += `<div class="mb-4"><h4 class="text-lg font-medium text-violet-600 mb-1">${uiTextRace.pacingSectionTitle || "Pacing Strategy"}</h4>${createHtmlList(marathonPlan.raceTactics.pacing)}</div>`;
-        }
-        if (marathonPlan.raceTactics.nutrition && Array.isArray(marathonPlan.raceTactics.nutrition) && marathonPlan.raceTactics.nutrition.length > 0) {
-            tacticsHtml += `<div class="mb-4"><h4 class="text-lg font-medium text-violet-600 mb-1">${uiTextRace.nutritionSectionTitle || "Nutrition & Hydration Plan"}</h4>${createHtmlList(marathonPlan.raceTactics.nutrition)}</div>`;
-        }
-        if (marathonPlan.raceTactics.mentalPrep && Array.isArray(marathonPlan.raceTactics.mentalPrep) && marathonPlan.raceTactics.mentalPrep.length > 0) {
-            tacticsHtml += `<div class="mb-4"><h4 class="text-lg font-medium text-violet-600 mb-1">${uiTextRace.mentalPrepSectionTitle || "Mental Preparation"}</h4>${createHtmlList(marathonPlan.raceTactics.mentalPrep)}</div>`;
-        }
-         if (marathonPlan.raceTactics.gear && Array.isArray(marathonPlan.raceTactics.gear) && marathonPlan.raceTactics.gear.length > 0) {
-            tacticsHtml += `<div class="mb-4"><h4 class="text-lg font-medium text-violet-600 mb-1">${uiTextRace.gearChecklistTitle || "Gear Checklist"}</h4>${createHtmlList(marathonPlan.raceTactics.gear)}</div>`;
-        }
-    } else {
-        tacticsHtml += "<p class='text-stone-500 italic'>Race tactics templates will appear here. Configure in 'Plan Overview' sheet.</p>";
-    }
-
-    raceSection.innerHTML = `
-        <div class="content-card race-section-card">
-            <h2 class="text-2xl sm:text-3xl font-bold text-violet-700 mb-3 text-center">${uiTextRace.mainTitle || "Race Day Hub"}</h2>
-            <div class="mb-6 p-4 bg-violet-50 rounded-lg shadow race-section-card">
-                <h3 class="text-xl font-semibold text-violet-600 mb-2 pb-1 border-b-2 border-violet-500">${uiTextRace.raceDetailsTitle || "Race Details"}</h3>
-                <p class="text-lg"><strong class="text-violet-600 font-semibold">${uiTextRace.raceNameLabel || "Race:"}</strong> <span class="text-stone-700 font-bold">${raceName}</span></p>
-                <p class="text-lg"><strong class="text-violet-600 font-semibold">${uiTextRace.raceDateLabel || "Date:"}</strong> <span class="text-stone-700 font-bold">${raceDateFormatted}</span> (Plan End Date)</p>
-                <p class="text-lg"><strong class="text-violet-600 font-semibold">${uiTextRace.raceDistanceLabel || "Distance:"}</strong> <span class="text-stone-700 font-bold">${raceDistance} km</span></p>
-            </div>
-            <div class="mb-6" id="raceElevationChartContainer">
-                <h3 class="text-xl font-semibold text-violet-600 mb-2">${uiTextRace.elevationProfileTitle || "Elevation Profile (per km)"}</h3>
-                <div class="chart-container bg-white p-2 rounded-md shadow">
-                    <canvas id="raceElevationChart"></canvas>
-                </div>
-                <p class="text-xs text-stone-500 mt-2 text-center">Elevation gain per kilometer of the race course.</p>
-            </div>
-            <div class="race-section-card p-4 rounded-lg bg-white shadow">
-                ${tacticsHtml}
-            </div>
-        </div>
-    `;
-    appContent.appendChild(raceSection);
-    renderRaceElevationChart();
-}
-
-function renderRaceElevationChart() {
-    const container = document.getElementById('raceElevationChartContainer'); // Re-fetch
-    const chartCanvas = document.getElementById('raceElevationChart'); // Re-fetch
-
-    if (!marathonPlan || !marathonPlan.raceElevationData || marathonPlan.raceElevationData.length === 0) {
-        if (container) {
-            if (chartCanvas) chartCanvas.style.display = 'none';
-            const p = container.querySelector('p.text-xs');
-            if (p) p.textContent = "No elevation data available. Add to 'RaceElevationData' sheet.";
-            else container.insertAdjacentHTML('beforeend', "<p class='text-stone-500 italic p-4 text-center'>No elevation data. Add to 'RaceElevationData' sheet.</p>");
-        }
-        console.warn("Race elevation data not available or empty.");
-        return;
-    }
-    if (!chartCanvas) {
-        console.warn("Race elevation chart canvas not found.");
-        return;
-    }
-    chartCanvas.style.display = 'block';
-
-    const labels = marathonPlan.raceElevationData.map(item => `Km ${item.kilometer}`);
-    const dataPoints = marathonPlan.raceElevationData.map(item => item.elevationGain);
-
-    if (raceElevationChartInstance) {
-        raceElevationChartInstance.destroy();
-    }
-    raceElevationChartInstance = new Chart(chartCanvas.getContext('2d'), {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Elevation Gain (m)',
-                data: dataPoints,
-                borderColor: 'rgba(124, 58, 237, 1)',
-                backgroundColor: 'rgba(124, 58, 237, 0.2)',
-                tension: 0.1,
-                fill: true
-            }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, scales: {
-                y: { title: { display: true, text: 'Elevation Gain (meters)', font: { weight: '500' } } },
-                x: { title: { display: true, text: 'Kilometer of Race', font: { weight: '500' } },
-                    ticks: { autoSkip: true, maxTicksLimit: Math.ceil((marathonPlan.settings.raceDistanceKm || 21) / 5) }
-                }
-            }, plugins: {
-                tooltip: { enabled: true, mode: 'index', intersect: false, callbacks: {
-                        label: function(context) { return `Km ${context.label.replace('Km ','')}: ${context.parsed.y} m gain`; }
-                    }
-                },
-                legend: { display: false }
-            }
-        }
-    });
-}
-
 // --- COMPANION APP FUNCTIONS ---
 
 async function ensureCompanionData() {
@@ -2070,41 +1944,6 @@ function createExerciseCard(item, type) {
             </a>
         </div>
     `;
-}
-
-// --- INFO TAB FUNCTIONS ---
-
-function renderInfoTab() {
-    if(!appContent) return;
-    setActiveNav('nav-info');
-    appContent.innerHTML = '';
-
-    if (!marathonPlan || !marathonPlan.newsSection) {
-        appContent.innerHTML = "<p>Info content is currently unavailable.</p>";
-        return;
-    }
-
-    let infoHtml = '';
-    const newsSection = marathonPlan.newsSection;
-
-    if (newsSection && Array.isArray(newsSection) && newsSection.length > 0) {
-        newsSection.forEach(newsItem => {
-            if (newsItem && newsItem.title && Array.isArray(newsItem.content)) {
-                infoHtml += `
-                    <div class="content-card news-section-card mb-6">
-                        <h3 class="text-xl sm:text-2xl font-semibold text-indigo-700 mb-3">${newsItem.title}</h3>
-                        ${createHtmlList(newsItem.content)}
-                    </div>`;
-            }
-        });
-    } else {
-        const noNewsMessage = (marathonPlan.uiText && marathonPlan.uiText.news && marathonPlan.uiText.news.noNewsAvailable)
-                                ? marathonPlan.uiText.news.noNewsAvailable
-                                : "No information to display at the moment.";
-        infoHtml = `<div class="content-card news-section-card"><p>${noNewsMessage}</p></div>`;
-    }
-
-    appContent.innerHTML = `<h2 class="text-2xl font-bold text-indigo-700 mb-4">Info</h2><div class="space-y-4">${infoHtml}</div>`;
 }
 
 // --- PACE CALCULATOR FUNCTIONS ---
