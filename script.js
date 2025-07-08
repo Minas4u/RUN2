@@ -509,9 +509,9 @@ const appSubtitle = document.getElementById('appSubtitle');
 const navOverview = document.getElementById('nav-overview');
 const navPlan = document.getElementById('nav-plan');
 const navCalendar = document.getElementById('nav-calendar');
-const navRace = document.getElementById('nav-race');
+// const navRace = document.getElementById('nav-race'); // Removed
 const navCompanion = document.getElementById('nav-companion');
-const navInfo = document.getElementById('nav-info');
+// const navInfo = document.getElementById('nav-info'); // Removed
 const mileageChartModal = document.getElementById('mileage-chart-modal');
 const closeMileageChartBtn = document.getElementById('closeMileageChartBtn');
 const updatesModal = document.getElementById('updates-modal');
@@ -803,9 +803,9 @@ function initializeApp() {
         if(navOverview) navOverview.addEventListener('click', renderOverview);
         if(navPlan) navPlan.addEventListener('click', renderTrainingPlan);
         if(navCalendar) navCalendar.addEventListener('click', renderCalendarTab);
-        if(navRace) navRace.addEventListener('click', renderRaceTab);
+        // if(navRace) navRace.addEventListener('click', renderRaceTab); // Removed
         if(navCompanion) navCompanion.addEventListener('click', renderCompanionTab);
-        if(navInfo) navInfo.addEventListener('click', renderInfoTab);
+        // if(navInfo) navInfo.addEventListener('click', renderInfoTab); // Removed
 
         // Add event listeners for the mileage chart modal
         if(mileageChartModal && closeMileageChartBtn) {
@@ -1015,9 +1015,9 @@ function updateStaticUIText() {
         if(navOverview) navOverview.textContent = 'Plan Overview';
         if(navPlan) navPlan.textContent = 'Training Plan';
         if(navCalendar) navCalendar.textContent = 'Calendar';
-        if(navRace) navRace.textContent = 'Race';
         if(navCompanion) navCompanion.textContent = 'Companion';
-        if(navInfo) navInfo.textContent = 'Info';
+  // if(navRace) navRace.textContent = 'Race'; // Already removed
+  // if(navInfo) navInfo.textContent = 'Info'; // Already removed
         return;
     }
 
@@ -1030,9 +1030,9 @@ function updateStaticUIText() {
     if(navOverview) navOverview.textContent = uiText.navButtonOverview || 'Plan Overview';
     if(navPlan) navPlan.textContent = uiText.navButtonPlan || 'Training Plan';
     if(navCalendar) navCalendar.textContent = uiText.navButtonCalendar || 'Calendar';
-    if(navRace) navRace.textContent = uiText.navButtonRace || 'Race';
+  // if(navRace) navRace.textContent = uiText.navButtonRace || 'Race'; // Removed
     if(navCompanion) navCompanion.textContent = uiText.navButtonCompanion || 'Companion';
-    if(navInfo) navInfo.textContent = uiText.navButtonInfo || 'Info';
+  // if(navInfo) navInfo.textContent = uiText.navButtonInfo || 'Info'; // Removed
 }
 
 /**
@@ -1042,13 +1042,13 @@ function updateStaticUIText() {
 function setActiveNav(activeId) {
     const navButtons = document.querySelectorAll('.nav-button');
     navButtons.forEach(btn => {
-        btn.classList.remove('active-overview', 'active-plan', 'active-calendar', 'active-race', 'active-companion', 'active-info');
+        btn.classList.remove('active-overview', 'active-plan', 'active-calendar', 'active-companion'); // Removed active-race, active-info
         if (btn.id === activeId) {
             if (activeId === 'nav-overview') btn.classList.add('active-overview');
             else if (activeId === 'nav-plan') btn.classList.add('active-plan');
             else if (activeId === 'nav-calendar') btn.classList.add('active-calendar');
-            else if (activeId === 'nav-race') btn.classList.add('active-race');
-            else if (activeId === 'nav-info') btn.classList.add('active-info');
+            // else if (activeId === 'nav-race') btn.classList.add('active-race'); // Removed
+            // else if (activeId === 'nav-info') btn.classList.add('active-info'); // Removed
             else if (activeId === 'nav-companion') btn.classList.add('active-companion');
             else btn.classList.add('active-overview'); // Default active style.
         }
@@ -1111,6 +1111,7 @@ function _buildTodaysTrainingTitleHtml(displayDate, titleText) {
 function _buildTodaysActivityHtml(todaysActivity, activityProps, paceString) {
     if (todaysActivity) {
         let activityTextForDisplay = todaysActivity.activity.replace(/^[^:]+:\s*/, '').trim();
+        const originalActivityFull = todaysActivity.activity; // Store original for prefix check
 
         // If the description is empty after stripping prefix (e.g. "Easy:"), use a fallback display name.
         if (!activityTextForDisplay && todaysActivity.activity.includes(':')) {
@@ -1142,12 +1143,16 @@ function _buildTodaysActivityHtml(todaysActivity, activityProps, paceString) {
             }
         }
 
+        // Special handling for "Interval Run:" prefix
+        if (activityProps.type === 'interval' && originalActivityFull.toLowerCase().startsWith('interval run:')) {
+            const prefix = originalActivityFull.substring(0, "Interval Run:".length);
+            const restOfActivity = originalActivityFull.substring("Interval Run:".length).trim();
+            activityTextForDisplay = `<span class="text-red-interval-header">${prefix}</span> ${restOfActivity}`;
+        }
+
 
         const colorClass = activityProps.colorClass;
-        let iconHtml = '';
-        if (activityProps.icon) {
-            iconHtml = `<img src="${activityProps.icon}" alt="${activityProps.type} icon" class="training-activity-icon ml-2">`;
-        }
+        // Icon HTML removed
         const paceHtml = paceString ? `<p class="pace-text text-lg font-semibold mt-1 static-dark-pace-text">Pace: ${paceString}</p>` : '';
 
         return `
@@ -1156,7 +1161,7 @@ function _buildTodaysActivityHtml(todaysActivity, activityProps, paceString) {
                 ${paceHtml}
                 <div class="activity-meta-container flex items-center mt-2">
                     <p class="text-xs text-stone-500">Phase: ${todaysActivity.phaseName} | Week: ${todaysActivity.weekNum}</p>
-                    ${iconHtml}
+                    {/* Icon HTML removed from here as well */}
                 </div>
             </div>`;
     }
