@@ -15,12 +15,12 @@
     --nav-button-active-calendar-bg: #059669;
     --nav-button-active-calendar-text: white;
     --nav-button-active-calendar-hover-bg: #047857;
-    /* --nav-button-active-race-bg: #7c3aed; */
-    /* --nav-button-active-race-text: white; */
-    /* --nav-button-active-race-hover-bg: #6d28d9; */
-    /* --nav-button-active-info-bg: #6366f1; */
-    /* --nav-button-active-info-text: white; */
-    /* --nav-button-active-info-hover-bg: #4f46e5; */
+    --nav-button-active-race-bg: #7c3aed;
+    --nav-button-active-race-text: white;
+    --nav-button-active-race-hover-bg: #6d28d9;
+    --nav-button-active-info-bg: #6366f1;
+    --nav-button-active-info-text: white;
+    --nav-button-active-info-hover-bg: #4f46e5;
     --nav-button-active-companion-bg: #10b981;
     --nav-button-active-companion-text: white;
     --nav-button-active-companion-hover-bg: #047857;
@@ -533,7 +533,11 @@ body.dark-mode {
 .nav-button.active-calendar { background-color: var(--nav-button-active-calendar-bg); color: var(--nav-button-active-calendar-text); box-shadow: var(--shadow-elevation-medium); transform: translateY(-1px) scale(1.02); }
 .nav-button.active-calendar:hover, .nav-button.active-calendar:focus { background-color: var(--nav-button-active-calendar-hover-bg); box-shadow: var(--shadow-elevation-high); transform: translateY(-2px) scale(1.03); }
 
-/* Removed .nav-button.active-race and .nav-button.active-info styles */
+.nav-button.active-race { background-color: var(--nav-button-active-race-bg); color: var(--nav-button-active-race-text); box-shadow: var(--shadow-elevation-medium); transform: translateY(-1px) scale(1.02); }
+.nav-button.active-race:hover, .nav-button.active-race:focus { background-color: var(--nav-button-active-race-hover-bg); box-shadow: var(--shadow-elevation-high); transform: translateY(-2px) scale(1.03); }
+
+.nav-button.active-info { background-color: var(--nav-button-active-info-bg); color: var(--nav-button-active-info-text); box-shadow: var(--shadow-elevation-medium); transform: translateY(-1px) scale(1.02); }
+.nav-button.active-info:hover, .nav-button.active-info:focus { background-color: var(--nav-button-active-info-hover-bg); box-shadow: var(--shadow-elevation-high); transform: translateY(-2px) scale(1.03); }
 
 .nav-button.active-companion { background-color: var(--nav-button-active-companion-bg); color: var(--nav-button-active-companion-text); box-shadow: var(--shadow-elevation-medium); transform: translateY(-1px) scale(1.02); }
 .nav-button.active-companion:hover, .nav-button.active-companion:focus { background-color: var(--nav-button-active-companion-hover-bg); box-shadow: var(--shadow-elevation-high); transform: translateY(-2px) scale(1.03); }
@@ -1639,14 +1643,6 @@ body.dark-mode .todays-weekly-notes-box p, body.dark-mode .todays-weekly-notes-b
 /* Dark mode specific overrides for button icon colors if not handled by Tailwind */
 body.dark-mode #darkModeToggle svg {
     stroke: var(--dm-text-color); /* Example: Use light text color for icon stroke */
-}
-
-.text-red-interval-header {
-    color: #d9534f !important; /* A distinct red, slightly less harsh than pure red */
-}
-
-body.dark-mode .text-red-interval-header {
-    color: #f07167 !important; /* A lighter, vibrant red for dark mode */
 }
 
 /* Ensure Tailwind's text colors in HTML are overridden if needed */
