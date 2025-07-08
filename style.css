@@ -15,12 +15,6 @@
     --nav-button-active-calendar-bg: #059669;
     --nav-button-active-calendar-text: white;
     --nav-button-active-calendar-hover-bg: #047857;
-    --nav-button-active-race-bg: #7c3aed;
-    --nav-button-active-race-text: white;
-    --nav-button-active-race-hover-bg: #6d28d9;
-    --nav-button-active-info-bg: #6366f1;
-    --nav-button-active-info-text: white;
-    --nav-button-active-info-hover-bg: #4f46e5;
     --nav-button-active-companion-bg: #10b981;
     --nav-button-active-companion-text: white;
     --nav-button-active-companion-hover-bg: #047857;
@@ -73,10 +67,6 @@
     --content-card-bg: #fafaf9;
     --overview-section-card-border-l: #0284c7;
     --overview-section-card-border-b: #f59e0b;
-    --news-section-card-border-l: #4f46e5;
-    --news-section-card-border-b: #059669;
-    --race-section-card-border-l: #7c3aed;
-    --race-section-card-border-b: #db2777;
 
     --table-border: #d1d5db;
     --table-th-bg: #f3f4f6;
@@ -477,10 +467,10 @@ body.dark-mode {
 
     --overview-section-card-border-l: var(--dm-title-marathon-text);
     --overview-section-card-border-b: var(--dm-title-project-text);
-    --news-section-card-border-l: var(--dm-updates-modal-header-gradient-start);
-    --news-section-card-border-b: var(--nav-button-active-calendar-bg); /* Using existing var as example */
-    --race-section-card-border-l: var(--nav-button-active-race-bg);
-    --race-section-card-border-b: #db2777; /* Keep pink for now, or create a dark var */
+    /* --news-section-card-border-l: var(--dm-updates-modal-header-gradient-start); */ /* Removed */
+    /* --news-section-card-border-b: var(--nav-button-active-calendar-bg); */ /* Removed */
+    /* --race-section-card-border-l: var(--nav-button-active-race-bg); */ /* Removed */
+    /* --race-section-card-border-b: #db2777; */ /* Removed */
 
 
     --custom-rect-nav-border-t: var(--dm-title-project-text);
@@ -532,12 +522,6 @@ body.dark-mode {
 
 .nav-button.active-calendar { background-color: var(--nav-button-active-calendar-bg); color: var(--nav-button-active-calendar-text); box-shadow: var(--shadow-elevation-medium); transform: translateY(-1px) scale(1.02); }
 .nav-button.active-calendar:hover, .nav-button.active-calendar:focus { background-color: var(--nav-button-active-calendar-hover-bg); box-shadow: var(--shadow-elevation-high); transform: translateY(-2px) scale(1.03); }
-
-.nav-button.active-race { background-color: var(--nav-button-active-race-bg); color: var(--nav-button-active-race-text); box-shadow: var(--shadow-elevation-medium); transform: translateY(-1px) scale(1.02); }
-.nav-button.active-race:hover, .nav-button.active-race:focus { background-color: var(--nav-button-active-race-hover-bg); box-shadow: var(--shadow-elevation-high); transform: translateY(-2px) scale(1.03); }
-
-.nav-button.active-info { background-color: var(--nav-button-active-info-bg); color: var(--nav-button-active-info-text); box-shadow: var(--shadow-elevation-medium); transform: translateY(-1px) scale(1.02); }
-.nav-button.active-info:hover, .nav-button.active-info:focus { background-color: var(--nav-button-active-info-hover-bg); box-shadow: var(--shadow-elevation-high); transform: translateY(-2px) scale(1.03); }
 
 .nav-button.active-companion { background-color: var(--nav-button-active-companion-bg); color: var(--nav-button-active-companion-text); box-shadow: var(--shadow-elevation-medium); transform: translateY(-1px) scale(1.02); }
 .nav-button.active-companion:hover, .nav-button.active-companion:focus { background-color: var(--nav-button-active-companion-hover-bg); box-shadow: var(--shadow-elevation-high); transform: translateY(-2px) scale(1.03); }
@@ -621,18 +605,6 @@ body.dark-mode .content-card {
     border-bottom-width: 4px;
     border-left-color: var(--overview-section-card-border-l);
     border-bottom-color: var(--overview-section-card-border-b);
-}
-.news-section-card {
-    border-left-width: 4px;
-    border-bottom-width: 4px;
-    border-left-color: var(--news-section-card-border-l);
-    border-bottom-color: var(--news-section-card-border-b);
-}
-.race-section-card {
-    border-left-width: 4px;
-    border-bottom-width: 4px;
-    border-left-color: var(--race-section-card-border-l);
-    border-bottom-color: var(--race-section-card-border-b);
 }
 
 .chart-container { position: relative; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
@@ -1126,16 +1098,12 @@ body.dark-mode .nav-button:hover:not(.active-overview):not(.active-plan):not(.ac
 body.dark-mode .nav-button.active-overview,
 body.dark-mode .nav-button.active-plan,
 body.dark-mode .nav-button.active-calendar,
-body.dark-mode .nav-button.active-race,
-body.dark-mode .nav-button.active-info,
 body.dark-mode .nav-button.active-companion {
     box-shadow: var(--dm-shadow-elevation-medium);
 }
 body.dark-mode .nav-button.active-overview:hover,
 body.dark-mode .nav-button.active-plan:hover,
 body.dark-mode .nav-button.active-calendar:hover,
-body.dark-mode .nav-button.active-race:hover,
-body.dark-mode .nav-button.active-info:hover,
 body.dark-mode .nav-button.active-companion:hover {
     box-shadow: var(--dm-shadow-elevation-high);
 }
