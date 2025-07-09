@@ -1036,6 +1036,7 @@ body.dark-mode .activity-text-rest, body.dark-mode .pace-text-rest { color: #9ca
 body.dark-mode .activity-text-zone, body.dark-mode .activity-text-race, body.dark-mode .pace-text-zone, body.dark-mode .pace-text-race { color: #c4b5fd !important; } /* violet-300 */
 body.dark-mode .activity-text-double, body.dark-mode .pace-text-double { color: #fcd34d !important; } /* amber-300 */
 body.dark-mode .activity-text-mobility, body.dark-mode .pace-text-mobility { color: #d4af80 !important; } /* custom brown-ish */
+body.dark-mode .activity-text-interval-red, body.dark-mode .pace-text-interval-red { color: #fca5a5 !important; } /* red-300 for dark mode intervals */
 
     /* Dark mode overrides for new activity types */
     --activity-text-race: #f0abfc;    /* Fuchsia 400 */
