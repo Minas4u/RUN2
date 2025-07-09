@@ -468,7 +468,7 @@ function getActivityProperties(activityString) {
         case 'base': colorClass = 'activity-text-base'; break;
         case 'recovery': colorClass = 'activity-text-recovery'; break;
         case 'tempo': colorClass = 'activity-text-tempo'; break;
-        case 'interval': colorClass = 'activity-text-interval'; break;
+        case 'interval': colorClass = 'activity-text-interval-red'; break;
         case 'fartlek': colorClass = 'activity-text-fartlek'; break;
         case 'strides_hills': colorClass = 'activity-text-str-hills'; break;
         case 'rest': colorClass = 'activity-text-rest'; break;

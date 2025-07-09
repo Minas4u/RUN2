@@ -1017,6 +1017,7 @@ body.dark-mode #darkModeToggle:focus {
 .activity-text-base, .pace-text-base { color: var(--activity-text-base) !important; }
 .activity-text-tempo, .pace-text-tempo { color: var(--activity-text-tempo) !important; }
 .activity-text-interval, .activity-text-intervals, .pace-text-interval, .pace-text-intervals { color: var(--activity-text-interval) !important; }
+.activity-text-interval-red, .pace-text-interval-red { color: red !important; } /* New style for red interval text */
 .activity-text-fartlek, .pace-text-fartlek { color: var(--activity-text-fartlek) !important; }
 .activity-text-str, .activity-text-hills, .pace-text-str, .pace-text-hills { color: var(--activity-text-str-hills) !important; }
 .activity-text-rest, .pace-text-rest { color: var(--activity-text-rest) !important; }
