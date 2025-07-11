@@ -1102,6 +1102,11 @@ function _buildTodaysActivityHtml(todaysActivity, activityProps, paceString) {
     if (todaysActivity) {
         let activityTextForDisplay = todaysActivity.activity.replace(/^[^:]+:\s*/, '').trim();
 
+        // If a pace is being displayed, remove the detailed zone text (e.g., "Z1 (High)") from the main activity description.
+        if (paceString) {
+            activityTextForDisplay = activityTextForDisplay.replace(/\s*Z[1-5]\s*\((Low|Average|High)\)/gi, '').trim();
+        }
+
         // If the description is empty after stripping prefix (e.g. "Easy:"), use a fallback display name.
         if (!activityTextForDisplay && todaysActivity.activity.includes(':')) {
             const type = activityProps.type;
